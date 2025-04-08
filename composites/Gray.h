@@ -118,7 +118,7 @@ void Gray<TBase>::init() {
     // Init all the outputs to zero,
     // since they don't all get update until a clock.
     for (int i = 0; i < NUM_OUTPUTS; ++i) {
-        TBase::outputs[i].value = 0;
+        TBase::outputs[i].setVoltage(0.0f);
     }
 }
 

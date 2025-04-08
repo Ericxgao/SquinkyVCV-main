@@ -80,6 +80,13 @@ struct SqTrimpot24 : Trimpot {
 	}
 };
 
+struct SnapTrimpot : Trimpot {
+    SnapTrimpot() {
+        snap = true;
+        smooth = false;
+    }
+};
+
 
 class SqPortBase : public app::SvgPort {
 private:
@@ -263,3 +270,34 @@ struct LEDBezelLG : app::SvgSwitch {
 	}
 };
 
+struct CenteredLabel : Widget {
+	int fontSize;
+	std::string text = "";
+    SnapTrimpot* knob = nullptr;
+    std::vector<std::string> labels;
+    NVGcolor color = SqHelper::COLOR_BLACK; // Default to black
+	CenteredLabel(int _fontSize = 12, std::vector<std::string> _labels = {}) {
+		fontSize = _fontSize;
+		// Use more reasonable label size that won't extend so far
+		box.size.y = fontSize * 2;
+		box.size.x = 84;
+        labels = _labels;
+	}
+	void updateText() {
+        if (knob != nullptr && !labels.empty()) {
+            int index = int(knob->getParamQuantity()->getDisplayValue());
+            if (index >= 0 && index < (int)labels.size()) {
+                this->text = labels[index];
+            }
+		}
+	}
+	void draw(const DrawArgs &args) override {
+		Widget::draw(args);
+		updateText();
+		nvgTextAlign(args.vg, NVG_ALIGN_LEFT);
+		nvgFillColor(args.vg, color);
+		nvgFontSize(args.vg, fontSize);
+		// Draw text centered horizontally at the specified position
+		nvgText(args.vg, box.size.x / 2, fontSize, text.c_str(), NULL);
+	}
+};

@@ -17,15 +17,24 @@ void InputPopupMenuParamWidget::setValue(float v)
         return;
     }
     this->text = longLabels[i];
+    if (label) {
+        label->text = longLabels[i];
+    }
+    if (getParamQuantity()) {
+        getParamQuantity()->setValue(v);
+    }
 }
 
 float InputPopupMenuParamWidget::getValue() const
 {
+    if (getParamQuantity()) {
+        return getParamQuantity()->getValue();
+    }
+    
+    // Fallback behavior for when paramQuantity is not set
     int index = 0;
     for (auto label : longLabels) {
-       // DEBUG("comparing label >%s< to this >%s<", label.c_str(), this->text.c_str());
         if (this->text == label) {
-         //   DEBUG("found match");
             return index;
         }
         ++index;
@@ -37,11 +46,23 @@ float InputPopupMenuParamWidget::getValue() const
 void InputPopupMenuParamWidget::setCallback(std::function<void(void)> cb)
 {
     callback = cb;
+    // Setup notification callback that will be called when knob value changes
+    setNotificationCallback([this](int) {
+        if (this->callback) {
+            this->callback();
+        }
+    });
 }
 
 void InputPopupMenuParamWidget::enable(bool b)
 {
     enabled = b;
+    if (knob) {
+        knob->visible = b;
+    }
+    if (label) {
+        label->visible = b;
+    }
 }
 
 
@@ -112,12 +133,12 @@ void CheckBox::drawX(NVGcontext* ctx)
 void CheckBox::onDragDrop(const ::rack::event::DragDrop& e)
 {
     if (e.origin == this) {
-		::rack::event::Action eAction;
+		::rack::widget::Widget::ActionEvent eAction;
 		onAction(eAction);
 	}
 }
 
-void CheckBox::onAction(const ::rack::event::Action& e)
+void CheckBox::onAction(const ::rack::widget::Widget::ActionEvent& e)
 {
     value = !value;
     if (callback) {

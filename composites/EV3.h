@@ -199,7 +199,7 @@ float EV3<TBase>::getInput(int osc, InputIds in1, InputIds in2, InputIds in3) {
         else if (in2Connected)
             id = in2;
     }
-    return TBase::inputs[id].value;
+    return TBase::inputs[id].getVoltage();
 }
 
 template <class TBase>
@@ -260,7 +260,7 @@ inline void EV3<TBase>::step() {
         totalGain += gain;
         mix += scaledWaveform;
         _out[i] = scaledWaveform;
-        TBase::outputs[VCO1_OUTPUT + i].value = rawWaveform;
+        TBase::outputs[VCO1_OUTPUT + i].setVoltage(rawWaveform);
     }
     if (totalGain <= 1) {
         volumeScale = 1;
@@ -268,7 +268,7 @@ inline void EV3<TBase>::step() {
         volumeScale = 1.0f / totalGain;
     }
     mix *= volumeScale;
-    TBase::outputs[MIX_OUTPUT].value = mix;
+    TBase::outputs[MIX_OUTPUT].setVoltage(mix);
 }
 
 template <class TBase>
@@ -291,7 +291,7 @@ inline void EV3<TBase>::processPitchInputs() {
 
         float fmCombined = 0;  // The final, scaled, value (post knob
         if (TBase::inputs[FM1_INPUT + osc].isConnected()) {
-            const float fm = TBase::inputs[FM1_INPUT + osc].value;
+            const float fm = TBase::inputs[FM1_INPUT + osc].getVoltage();
             const float fmDepth = AudioMath::quadraticBipolar(TBase::params[FM1_PARAM + delta].value);
             fmCombined = (fmDepth * fm);
         } else {

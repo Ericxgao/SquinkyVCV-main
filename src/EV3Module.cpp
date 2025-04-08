@@ -416,11 +416,27 @@ void EV3Widget::makeSection(EV3Module *module, int index, std::shared_ptr<ICompo
     const float y4 = y3 + 43;
     const float xx = x - 12;
 
+    #ifndef METAMODULE
     addParam(SqHelper::createParam<WaveformSwitch>(
         icomp,
         Vec(xx, y4),
         module,
         Comp::WAVE1_PARAM + delta * index));
+    #else
+    SnapTrimpot* const waveKnob = SqHelper::createParamCentered<SnapTrimpot>(
+        icomp,
+        Vec(x0, y4 + 20),
+        module,
+        Comp::WAVE1_PARAM + delta * index);
+    addParam(waveKnob);
+    
+    std::vector<std::string> waveNames = {"Sine", "Tri", "Saw", "Square", "Even", "Off"};
+    CenteredLabel* const waveLabel = new CenteredLabel(20, waveNames);
+    waveLabel->box.pos = Vec(waveKnob->box.pos.x - 42, waveKnob->box.pos.y + 30);
+    waveLabel->text = waveNames[0];
+    waveLabel->knob = waveKnob;
+    addChild(waveLabel);
+    #endif
 }
 
 void EV3Widget::makeSections(EV3Module* module, std::shared_ptr<IComposite> icomp)

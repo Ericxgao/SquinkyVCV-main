@@ -365,7 +365,7 @@ void S4Button::drawLayer(const DrawArgs& args, int layer) {
     ParamWidget::drawLayer(args,layer);
 }
 
-void S4Button::onButton(const rack::event::Button& e) {
+void S4Button::onButton(const rack::widget::Widget::ButtonEvent& e) {
 
     if ((e.button == GLFW_MOUSE_BUTTON_LEFT) && (e.action == GLFW_PRESS) && (e.mods & RACK_MOD_CTRL)) {
         mouseButtonIsControlKey = true;

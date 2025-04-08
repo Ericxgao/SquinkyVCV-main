@@ -9,8 +9,15 @@
 #if ARCH_ARM64
 #include "arm_intrinsics_sub.h"
 #else
+
+#ifndef METAMODULE
 #include <xmmintrin.h>
 #include <mmintrin.h>
+#else   
+#include "simde/x86/sse.h"
+#include "simde/x86/mmx.h"
+#endif
+
 #endif
 
 #define _LLOOK

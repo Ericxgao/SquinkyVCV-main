@@ -112,8 +112,9 @@ inline void LadderFilterBank<T>::stepn(float sampleTime, int numChannels,
             const T qMiddle = 2.8;
             res = (res < 2) ? (res * qMiddle / 2) : .5 * (res - 2) * (4 - qMiddle) + qMiddle;
 
+            #ifndef METAMODULE
             if (res < 0 || res > 4) fprintf(stderr, "res out of bounds %f\n", res);
-
+            #endif
             const T bAmt = makeupGainParam;
             const T makeupGain = 1 + bAmt * (res);
 

@@ -271,6 +271,7 @@ void F2Widget::addKnobs(F2Module* module, std::shared_ptr<IComposite> icomp) {
         Vec(93, 51),
         module, Comp::LIMITER_PARAM));
 
+#ifndef METAMODULE
     PopupMenuParamWidget* p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(7, 97),
@@ -292,7 +293,38 @@ void F2Widget::addKnobs(F2Module* module, std::shared_ptr<IComposite> icomp) {
     p->text = "12dB";
     p->setLabels({"12dB", "24dB", "Par", "Par -"});
     addParam(p);
+#else
+    // Add knob and label
+    SnapTrimpot* const modeKnob = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(13, 97),
+        module,
+        Comp::MODE_PARAM);
+    addParam(modeKnob);
 
+    std::vector<std::string> modeNames = {"LP", "BP", "HP", "N"};
+    CenteredLabel* const modeLabel = new CenteredLabel(20, modeNames);
+    modeLabel->box.pos = Vec(modeKnob->box.pos.x - 22, modeKnob->box.pos.y);
+    modeLabel->text = modeNames[0];
+    modeLabel->knob = modeKnob;
+    addChild(modeLabel);
+
+    // Add topology knob and label
+    SnapTrimpot* const topologyKnob = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(13, 131),
+        module,
+        Comp::TOPOLOGY_PARAM);      
+    addParam(topologyKnob);
+
+    std::vector<std::string> topologyNames = {"12dB", "24dB", "Par", "Par -"};  
+    CenteredLabel* const topologyLabel = new CenteredLabel(20, topologyNames);
+    topologyLabel->box.pos = Vec(topologyKnob->box.pos.x - 22, topologyKnob->box.pos.y);
+    topologyLabel->text = topologyNames[0];
+    topologyLabel->knob = topologyKnob;
+    addChild(topologyLabel);
+    
+#endif
     // just for test
 #if 0
     addChild(createLight<MediumLight<GreenLight>>(

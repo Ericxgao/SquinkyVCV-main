@@ -25,7 +25,9 @@ ThreadMessage*  ThreadSharedState::server_waitForMessageOrShutdown()
             }
         }
         if (!done) {
+            #ifndef METAMODULE
             mailboxCondition.wait(guard);
+            #endif
         }
     }
     mailboxClient2Server.store(nullptr);
@@ -55,7 +57,9 @@ ThreadMessage* ThreadSharedState::client_pollMessage()
 // signal in lock
 bool ThreadSharedState::client_trySendMessage(ThreadMessage* msg)
 {
+    #ifndef METAMODULE
     assert(serverRunning.load());
+    #endif
     // If the client tries to send a message before the previous one is read, the
     // call will fail and the client must try again.
     if (mailboxClient2Server.load()) {
@@ -63,7 +67,7 @@ bool ThreadSharedState::client_trySendMessage(ThreadMessage* msg)
     }
 
     // Write to mailbox (condition) in lock
-
+    #ifndef METAMODULE
     std::unique_lock<std::mutex> guard(mailboxMutex, std::defer_lock);
     // We must use a try_lock here, as calling regular lock() could cause a priority inversion.
     bool didLock = guard.try_lock();
@@ -73,6 +77,7 @@ bool ThreadSharedState::client_trySendMessage(ThreadMessage* msg)
     assert(guard.owns_lock());
 
     assert(!mailboxClient2Server.load());               // if there is still a message there we are out of sync
+    #endif
     mailboxClient2Server.store(msg);
 
     mailboxCondition.notify_all();

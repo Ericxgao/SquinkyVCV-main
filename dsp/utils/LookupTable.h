@@ -10,7 +10,11 @@
 #if ARCH_ARM64
 #include "arm_intrinsics_sub.h"
 #else
+#ifdef METAMODULE
+#include "simde/x86/sse2.h"
+#else
 #include <emmintrin.h>
+#endif
 #endif
 #include <functional>
 

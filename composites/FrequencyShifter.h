@@ -69,7 +69,8 @@ public:
         AUDIO_INPUT,
         CV_INPUT,
         AUDIO_R_INPUT,
-        NUM_INPUTS
+        NUM_INPUTS,
+        FREQ_RANGE_PARAM
     };
 
     enum OutputIds {

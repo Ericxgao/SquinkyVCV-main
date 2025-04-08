@@ -51,7 +51,7 @@ public:
     void setSelection(bool);
 
     void onDragHover(const rack::event::DragHover& e) override;
-    void onButton(const rack::event::Button& e) override;
+    void onButton(const rack::widget::Widget::ButtonEvent& e) override;
     void onDragStart(const rack::event::DragStart& e) override;
     void onSelectKey(const rack::event::SelectKey& e) override;
     bool isSelected() const {

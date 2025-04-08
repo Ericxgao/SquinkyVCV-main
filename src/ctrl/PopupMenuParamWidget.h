@@ -2,7 +2,7 @@
 
 #include "rack.hpp"
 #include "SqUI.h"
-
+#include "ctrl/SqWidgets.h"
 
 #include <random>
 #include <functional>
@@ -19,6 +19,30 @@ public:
     std::vector<std::string> longLabels;
     std::vector<std::string> shortLabels;
     std::string text = {"pop widget default"};
+    RoganSLBlue30* knob = nullptr; // Added knob pointer
+
+    PopupMenuParamWidget() {
+        // Create and initialize the knob
+        knob = new RoganSLBlue30();
+        knob->box.pos = Vec(0, 0);
+        addChild(knob);
+    }
+
+    ~PopupMenuParamWidget() {
+        // The widget tree will delete knob automatically
+    }
+
+    void step() override {
+        ParamWidget::step();
+        
+        // // Make sure knob shows the same parameter value as the widget
+        // if (knob && this->getParamQuantity()) {
+        //     if (!knob->getParamQuantity()) {
+        //         // Connect knob's parameter to the widget's parameter
+        //         knob->paramQuantity = this->paramQuantity;
+        //     }
+        // }
+    }
 
     /** Creator must call this function before adding widget to the stage.
      * These are the string that will show in the dropdown, and possibly
@@ -26,7 +50,7 @@ public:
      */
     void setLabels(std::vector<std::string> l) {
         longLabels = l;
-        ::rack::event::Change e;
+        ::rack::widget::Widget::ChangeEvent e;
         onChange(e);
     }
 
@@ -37,7 +61,7 @@ public:
      */
     void setShortLabels(std::vector<std::string> l) {
         shortLabels = l;
-        ::rack::event::Change e;
+        ::rack::widget::Widget::ChangeEvent e;
         onChange(e);
     }
 
@@ -51,9 +75,9 @@ public:
     void setValueToIndexFunction(ValueToIndexFunction);
 
     void drawLayer(const DrawArgs &arg, int layer) override;
-    void onButton(const ::rack::event::Button &e) override;
-    void onChange(const ::rack::event::Change &e) override;
-    void onAction(const ::rack::event::Action &e) override;
+    void onButton(const ::rack::widget::Widget::ButtonEvent &e) override;
+    void onChange(const ::rack::widget::Widget::ChangeEvent &e) override;
+    void onAction(const ::rack::widget::Widget::ActionEvent &e) override;
   
     friend class PopupMenuItem;
 
@@ -102,7 +126,7 @@ inline void PopupMenuParamWidget::setValueToIndexFunction(ValueToIndexFunction f
     optionalValueToIndexFunction = fn;
 }
 
-inline void PopupMenuParamWidget::onChange(const ::rack::event::Change &e) {
+inline void PopupMenuParamWidget::onChange(const ::rack::widget::Widget::ChangeEvent &e) {
     if (!this->getParamQuantity()) {
         return;  // no module. Probably in the module browser.
     }
@@ -125,25 +149,51 @@ inline void PopupMenuParamWidget::onChange(const ::rack::event::Change &e) {
     if (optionalNotificationCallback) {
         optionalNotificationCallback(index);
     }
+    
+    // Update knob value when parameter changes
+    if (knob && knob->getParamQuantity() && knob->getParamQuantity() != getParamQuantity()) {
+        knob->getParamQuantity()->setValue(getParamQuantity()->getValue());
+    }
 }
 
 inline void PopupMenuParamWidget::drawLayer(const DrawArgs &args, int layer) {
     if (layer == 1) {
         BNDwidgetState state = BND_DEFAULT;
-        bndChoiceButton(args.vg, 0.0, 0.0, box.size.x, box.size.y, BND_CORNER_NONE, state, -1, text.c_str());
+        
+        // Calculate positions for button and knob
+        float knobSize = std::min(30.0f, box.size.y - 4); // Ensure knob fits height with small margin
+        float buttonWidth = box.size.x - knobSize - 5; // 5px spacing
+        
+        // Draw the popup button on the left side
+        bndChoiceButton(args.vg, 0.0, 0.0, buttonWidth, box.size.y, BND_CORNER_NONE, state, -1, text.c_str());
+        
+        // Position the knob on the right side
+        if (knob) {
+            knob->box.size = Vec(knobSize, knobSize);
+            knob->box.pos = Vec(buttonWidth + 5, (box.size.y - knobSize) / 2);
+        }
     }
     ParamWidget::drawLayer(args, layer);
 }
 
-inline void PopupMenuParamWidget::onButton(const ::rack::event::Button &e) {
+inline void PopupMenuParamWidget::onButton(const ::rack::widget::Widget::ButtonEvent &e) {
     if ((e.button == GLFW_MOUSE_BUTTON_LEFT) && (e.action == GLFW_PRESS)) {
-        // remember which param is touched, so mapping can work.
-        if (module) {
-            APP->scene->rack->setTouchedParam(this);
+        // Check if click is on button area, not on knob
+        float knobSize = std::min(30.0f, box.size.y - 4);
+        float buttonWidth = box.size.x - knobSize - 5;
+        
+        // Only open menu if click is on button area
+        if (e.pos.x <= buttonWidth) {
+            // remember which param is touched, so mapping can work.
+            if (module) {
+                APP->scene->rack->setTouchedParam(this);
+            }
+            ::rack::widget::Widget::ActionEvent ea;
+            onAction(ea);
+            sq::consumeEvent(&e, this);
         }
-        ::rack::event::Action ea;
-        onAction(ea);
-        sq::consumeEvent(&e, this);
+        // If click is on knob area, let the knob handle it
+        // The event is not consumed here so it propagates to the knob
     }
 }
 
@@ -160,9 +210,9 @@ public:
     const int index;
     PopupMenuParamWidget *const parent;
 
-    void onAction(const ::rack::event::Action &e) override {
+    void onAction(const ::rack::widget::Widget::ActionEvent &e) override {
         parent->text = this->text;
-        ::rack::event::Change ce;
+        ::rack::widget::Widget::ChangeEvent ce;
         if (parent->getParamQuantity()) {
             float newValue = index;
             const float oldValue =  parent->getParamQuantity()->getValue();
@@ -184,7 +234,7 @@ public:
     }
 };
 
-inline void PopupMenuParamWidget::onAction(const ::rack::event::Action &e) {
+inline void PopupMenuParamWidget::onAction(const ::rack::widget::Widget::ActionEvent &e) {
     ::rack::ui::Menu *menu = ::rack::createMenu();
 
     // is choice button the right base class?

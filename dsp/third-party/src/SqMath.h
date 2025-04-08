@@ -4,7 +4,11 @@
 #if ARCH_ARM64
 #include "arm_intrinsics_sub.h"
 #else
+#ifdef METAMODULE
+#include "simde/x86/avx.h"
+#else
 #include <immintrin.h>
+#endif
 #endif
 #include <random>
 #if !defined(M_PI)

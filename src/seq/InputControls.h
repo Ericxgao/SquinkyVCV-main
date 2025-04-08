@@ -14,7 +14,7 @@
 class Button2 : public ::rack::ui::Button
 {
 public:
-    void onAction(const ::rack::event::Action& e) override {
+    void onAction(const ::rack::widget::Widget::ActionEvent& e) override {
         // DEBUG("onAction from button");
         if (handler) {
             handler();
@@ -42,7 +42,7 @@ public:
 
 
 /**
- * A basic popup menu selector widget
+ * A basic popup menu selector widget that now uses a knob
  */
 class InputPopupMenuParamWidget : public PopupMenuParamWidget, public InputControl
 {
@@ -66,7 +66,7 @@ public:
 	//void onDragEnd(const ::rack::event::DragEnd& e) override;
 	void onDragDrop(const ::rack::event::DragDrop& e) override;
     void draw(const Widget::DrawArgs &args) override;
-    void onAction(const ::rack::event::Action& e) override;
+    void onAction(const ::rack::widget::Widget::ActionEvent& e) override;
 
     float getValue() const override;
     void setValue(float) override;

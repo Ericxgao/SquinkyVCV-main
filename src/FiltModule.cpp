@@ -1,4 +1,3 @@
-
 #include <sstream>
 #include "Squinky.hpp"
 #include "WidgetComposite.h"
@@ -271,6 +270,7 @@ void FiltWidget::addParams(FiltModule *module, std::shared_ptr<IComposite> icomp
         module,
         Comp::EDGE_TRIM_PARAM));
 
+    #ifndef METAMODULE
     PopupMenuParamWidget* p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(43, y3),
@@ -292,6 +292,31 @@ void FiltWidget::addParams(FiltModule *module, std::shared_ptr<IComposite> icomp
     p->text = "Transistor";
     p->setLabels(Comp::getVoicingNames());
     addParam(p);
+    #else
+    SnapTrimpot* const typeKnob = SqHelper::createParamCentered<SnapTrimpot>(
+        icomp,
+        Vec(x2, y3),
+        module,
+        Comp::TYPE_PARAM);
+    addParam(typeKnob);
+    CenteredLabel* const typeLabel = new CenteredLabel(20, Comp::getTypeNames());
+	typeLabel->box.pos = Vec(typeKnob->box.pos.x - 5, typeKnob->box.pos.y);
+	typeLabel->text = Comp::getTypeNames()[int(typeKnob->getParamQuantity()->getValue())];
+    typeLabel->knob = typeKnob;
+	addChild(typeLabel);
+    
+    SnapTrimpot* const voicingKnob = SqHelper::createParamCentered<SnapTrimpot>(  
+        icomp,
+        Vec(x2, y3 + 30),
+        module,
+        Comp::VOICING_PARAM);
+    addParam(voicingKnob);
+    CenteredLabel* const voicingLabel = new CenteredLabel(20, Comp::getVoicingNames());
+	voicingLabel->box.pos = Vec(voicingKnob->box.pos.x - 5, voicingKnob->box.pos.y);
+	voicingLabel->text = Comp::getVoicingNames()[int(voicingKnob->getParamQuantity()->getValue())];
+	voicingLabel->knob = voicingKnob;
+	addChild(voicingLabel);
+    #endif
  } 
 
 void FiltWidget::addTrimmers(FiltModule *module, std::shared_ptr<IComposite> icomp)
