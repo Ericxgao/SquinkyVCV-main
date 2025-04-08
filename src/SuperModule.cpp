@@ -10,7 +10,7 @@
 #include "DrawTimer.h"
 #include "IMWidgets.hpp"
 
-#include <sstream>
+// #include <sstream>
 
 #ifdef _TIME_DRAWING
 static DrawTimer drawTimer("Saws");
@@ -49,8 +49,8 @@ SuperModule::SuperModule()
     configOutput(Super<WidgetComposite>::MAIN_OUTPUT_LEFT,"Main left");
     configOutput(Super<WidgetComposite>::MAIN_OUTPUT_RIGHT,"Main right");
 
-    paramQuantities[Comp::OCTAVE_PARAM]->snapEnabled = true;
-    paramQuantities[Comp::OCTAVE_PARAM]->smoothEnabled = false;
+    // paramQuantities[Comp::OCTAVE_PARAM]->snapEnabled = true;
+    // paramQuantities[Comp::OCTAVE_PARAM]->smoothEnabled = false;
     super = std::make_shared<Comp>(this);
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this);
@@ -145,8 +145,8 @@ void superWidget::addPitchKnobs(SuperModule* module, std::shared_ptr<IComposite>
         Vec(col1, row1),
         module, 
         Comp::OCTAVE_PARAM);
-    //oct->snap = true;
-    //oct->smooth = false;
+    oct->snap = true;
+    oct->smooth = false;
     addParam(oct);
     Label* l = addLabel(
         Vec(col1 - 23, row1 + labelOffsetBig),

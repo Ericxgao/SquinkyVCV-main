@@ -5,7 +5,13 @@
 #if ARCH_ARM64
 #include "arm_intrinsics_sub.h"
 #else
+
+#ifndef METAMODULE
 #include <immintrin.h>
+#else
+#include "simde/x86/avx.h"
+#endif
+
 #endif
 
 #include <memory>

@@ -163,8 +163,15 @@ private:
             WARN("can't patch to input that is already patched");
             return;
         }
-        
+
+        #ifndef METAMODULE
         rack::app::CableWidget* cw = new rack::app::CableWidget;
+        #else
+        // Create a cable without using the constructor directly
+        rack::app::CableWidget* cw = (rack::app::CableWidget*)malloc(sizeof(rack::app::CableWidget));
+        memset(cw, 0, sizeof(rack::app::CableWidget));
+        #endif
+        
         cw->inputPort = input;
         cw->outputPort = output;
 	    cw->color = APP->scene->rack->getNextCableColor();
@@ -389,6 +396,7 @@ void WVCOWidget::addKnobs(WVCOModule *module, std::shared_ptr<IComposite> icomp)
         Comp::FINE_TUNE_PARAM));
     //addLabel(Vec(knobX3 - 4, knobY1 - labelAboveKnob), "Fine");
 
+    #ifndef METAMODULE
     PopupMenuParamWidget* p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(knobX4-12, knobY1+2),
@@ -399,6 +407,21 @@ void WVCOWidget::addKnobs(WVCOModule *module, std::shared_ptr<IComposite> icomp)
     p->text = "Off";
     p->setLabels( {"sine", "fold", "T/S"});
     addParam(p);
+    #else
+    std::vector<std::string> labelsWaveform = {"sine", "fold", "T/S"};  
+    SnapTrimpot* const trimpot = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(knobX4, knobY1+2),
+        module,
+        Comp::WAVE_SHAPE_PARAM);
+    addParam(trimpot);
+
+    CenteredLabel* const waveLabel = new CenteredLabel(18, labelsWaveform);
+    waveLabel->box.pos = Vec(trimpot->box.pos.x - 48, trimpot->box.pos.y + 20);
+    waveLabel->text = labelsWaveform[0];
+    waveLabel->knob = trimpot;
+    addChild(waveLabel);
+    #endif
 
     //addLabel(Vec(knobX4 - 8, knobY1 - labelAboveKnob), "Wave");
 

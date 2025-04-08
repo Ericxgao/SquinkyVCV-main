@@ -108,6 +108,7 @@ void BootyModule::fromJson(json_t *rootJ)
                     rangeIndex = i;
         }
         shifter->freqRange = rg;
+        
     }
 }
 
@@ -276,14 +277,14 @@ BootyWidget::BootyWidget(BootyModule *module) : ModuleWidget(module)
     #else
     SnapTrimpot* const rangeKnob = SqHelper::createParam<SnapTrimpot>(
         icomp,
-        Vec(xPos, row2),
+        Vec(xPos + 20, row2),
         module,
         Comp::FREQ_RANGE_PARAM);
     addParam(rangeKnob);
 
     std::vector<std::string> rangeNames = {"5 Hz", "50 Hz", "500 Hz", "5 kHz", "exp"};
-    CenteredLabel* const rangeLabel = new CenteredLabel(20, rangeNames);
-    rangeLabel->box.pos = Vec(rangeKnob->box.pos.x - 42, rangeKnob->box.pos.y + 20);
+    CenteredLabel* const rangeLabel = new CenteredLabel(18, rangeNames);
+    rangeLabel->box.pos = Vec(rangeKnob->box.pos.x - 64, rangeKnob->box.pos.y + 20);
     rangeLabel->text = rangeNames[0];
     rangeLabel->knob = rangeKnob;
     addChild(rangeLabel);

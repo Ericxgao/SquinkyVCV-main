@@ -169,6 +169,9 @@ void SinesWidget::addDrawbars(SinesModule *module, std::shared_ptr<IComposite> i
         drawbar=createParam<Drawbar>(Vec(x,drawbarY), module, Comp::DRAWBAR1_PARAM+i);
 
         drawbar->DrawbarSvg(handles[i]);
+        #ifdef METAMODULE
+        drawbar->box.pos = Vec(x, drawbarY);
+        #endif
         addParam(drawbar);
 
         addInput(createInput<PJ301MPort>(

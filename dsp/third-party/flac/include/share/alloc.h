@@ -48,6 +48,7 @@
 #include <stdlib.h> /* for size_t, malloc(), etc */
 #include "share/compat.h"
 
+#ifndef METAMODULE
 #ifndef SIZE_MAX
 # ifndef SIZE_T_MAX
 #  ifdef _MSC_VER
@@ -61,6 +62,10 @@
 #  endif
 # endif
 # define SIZE_MAX SIZE_T_MAX
+#endif
+#else
+#define SIZE_T_MAX 0xffffffff
+#define SIZE_MAX SIZE_T_MAX
 #endif
 
 /* avoid malloc()ing 0 bytes, see:

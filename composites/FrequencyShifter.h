@@ -62,6 +62,9 @@ public:
     // Define all the enums here. This will let the tests and the widget access them.
     enum ParamIds {
         PITCH_PARAM,  // the big pitch knob
+        #ifdef METAMODULE
+        FREQ_RANGE_PARAM,
+        #endif
         NUM_PARAMS
     };
 
@@ -70,7 +73,6 @@ public:
         CV_INPUT,
         AUDIO_R_INPUT,
         NUM_INPUTS,
-        FREQ_RANGE_PARAM
     };
 
     enum OutputIds {
@@ -111,6 +113,10 @@ private:
 template <class TBase>
 inline void FrequencyShifter<TBase>::step() {
     assert(exponential2->isValid());
+
+    #ifndef METAMODULE
+    T freqRange = TBase::params[FREQ_RANGE_PARAM].value;
+    #endif
 
     // Add the knob and the CV value.
     T freqHz;
@@ -169,6 +175,9 @@ IComposite::Config BootyDescription<TBase>::getParamValue(int i) {
     switch (i) {
         case FrequencyShifter<TBase>::PITCH_PARAM:  // the big pitch knob
             ret = {-5.0, 5.0, 0.0, "Pitch shift"};
+            break;
+        case FrequencyShifter<TBase>::FREQ_RANGE_PARAM:
+            ret = {0, 4.0, 0.0, "Frequency range"};
             break;
         default:
             assert(false);

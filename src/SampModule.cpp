@@ -5,7 +5,12 @@
 #include "WidgetComposite.h"
 
 #ifdef _SAMP
+
+#ifndef METAMODULE
 #include <osdialog.h>
+#else
+#include "async_filebrowser.hh"
+#endif
 
 #include "InstrumentInfo.h"
 #include "PitchUtils.h"

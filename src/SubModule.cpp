@@ -1,4 +1,3 @@
-
 #include <sstream>
 #include "Squinky.hpp"
 #include "WidgetComposite.h"
@@ -264,6 +263,7 @@ void SubWidget::addKnobs(SubModule *module, std::shared_ptr<IComposite> icomp, i
 const float xMiddleSel = middle -24;
 void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite> icomp)
 {
+    #ifndef METAMODULE
     PopupMenuParamWidget* p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(xMiddleSel, 206),
@@ -274,8 +274,24 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->text = "Off";
     p->setLabels( {"Off", "12ET", "7ET", "12JI", "7JI"});
     addParam(p);
+    #else
+    std::vector<std::string> labelsQuantizer = {"Off", "12ET", "7ET", "12JI", "7JI"};
+    SnapTrimpot* trimpotQuantizer = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(xMiddleSel, 206),
+        module,
+        Comp::QUANTIZER_SCALE_PARAM);
+    addParam(trimpotQuantizer);
+
+    CenteredLabel* const quantLabel = new CenteredLabel(20, labelsQuantizer);
+    quantLabel->text = labelsQuantizer[0];
+    quantLabel->box.pos = Vec(trimpotQuantizer->box.pos.x - 42, trimpotQuantizer->box.pos.y + 22);
+    quantLabel->knob = trimpotQuantizer;
+    addChild(quantLabel);
+    #endif
 
     int side = 0;
+    #ifndef METAMODULE
     p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(xMiddleSel, knobY1 - 10),
@@ -286,8 +302,24 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->text = "Saw";
     p->setLabels( {"Saw", "Sq", "Mix"});
     addParam(p);
+    #else
+    std::vector<std::string> labelsWaveform = {"Saw", "Sq", "Mix"};
+    SnapTrimpot* trimpotWaveform = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(xMiddleSel, knobY1 - 10),
+        module,
+        Comp::WAVEFORM1_PARAM + side);
+    addParam(trimpotWaveform);
+
+    CenteredLabel* const labelA = new CenteredLabel(20, labelsWaveform);
+    labelA->text = labelsWaveform[0];
+    labelA->box.pos = Vec(trimpotWaveform->box.pos.x - 42, trimpotWaveform->box.pos.y + 22);
+    labelA->knob = trimpotWaveform;
+    addChild(labelA);
+    #endif
 
     side = 1;
+    #ifndef METAMODULE
     p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         Vec(xMiddleSel, knobY1 + 20),
@@ -298,6 +330,21 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->text = "Saw";
     p->setLabels( {"Saw", "Sq", "Mix"});
     addParam(p);
+    #else
+    std::vector<std::string> labels = {"Saw", "Sq", "Mix"};
+    SnapTrimpot* trimpot = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(xMiddleSel, knobY1 + 40),
+        module,
+        Comp::WAVEFORM1_PARAM + side);
+    addParam(trimpot);
+
+    CenteredLabel* const labelB = new CenteredLabel(20, labels);
+    labelB->text = labels[0];
+    labelB->box.pos = Vec(trimpot->box.pos.x - 42, trimpot->box.pos.y + 22);
+    labelB->knob = trimpot;
+    addChild(labelB);
+    #endif
 }
 
 

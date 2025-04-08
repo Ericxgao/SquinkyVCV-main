@@ -243,6 +243,7 @@ void CompressorWidget::addControls(CompressorModule *module, std::shared_ptr<ICo
 #endif
 
     std::vector<std::string> labels = Comp::ratios();
+    #ifndef METAMODULE
     PopupMenuParamWidget *p = SqHelper::createParam<PopupMenuParamWidget>(
         icomp,
         //Vec(knobX,  - 11 + knobY + 3 * dy),
@@ -254,6 +255,20 @@ void CompressorWidget::addControls(CompressorModule *module, std::shared_ptr<ICo
     p->text = labels[3];
     p->setLabels(labels);
     addParam(p);
+    #else
+    SnapTrimpot* const trimpot = SqHelper::createParam<SnapTrimpot>(
+        icomp,
+        Vec(8, 50),
+        module,
+        Comp::RATIO_PARAM);
+    addParam(trimpot);
+
+    CenteredLabel* const ratioLabel = new CenteredLabel(16, labels);
+    ratioLabel->box.pos = Vec(trimpot->box.pos.x - 22, trimpot->box.pos.y);
+    ratioLabel->text = labels[3];
+    ratioLabel->knob = trimpot;
+    addChild(ratioLabel);
+    #endif
 }
 
 void CompressorWidget::addJacks(CompressorModule *module, std::shared_ptr<IComposite> icomp) {
