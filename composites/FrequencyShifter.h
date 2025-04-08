@@ -114,7 +114,7 @@ template <class TBase>
 inline void FrequencyShifter<TBase>::step() {
     assert(exponential2->isValid());
 
-    #ifndef METAMODULE
+    #ifdef METAMODULE
     T freqRange = TBase::params[FREQ_RANGE_PARAM].value;
     #endif
 
