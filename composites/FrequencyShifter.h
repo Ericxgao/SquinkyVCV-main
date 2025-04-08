@@ -94,7 +94,15 @@ public:
 
     typedef float T;  // use floats for all signals
     T freqRange = 5;  // the freq range switch
+
 private:
+    T values[5] = {
+        5,
+        50,
+        500,
+        5000,
+        0
+    };
     SinOscillatorParams<T> oscParams;
     SinOscillatorState<T> oscState;
     SinOscillatorState<T> oscStateR;
@@ -115,7 +123,7 @@ inline void FrequencyShifter<TBase>::step() {
     assert(exponential2->isValid());
 
     #ifdef METAMODULE
-    T freqRange = TBase::params[FREQ_RANGE_PARAM].value;
+    T freqRange = values[int(TBase::params[FREQ_RANGE_PARAM].value)];
     #endif
 
     // Add the knob and the CV value.
