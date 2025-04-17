@@ -57,6 +57,9 @@ struct CHBgWidget : ModuleWidget
         label->box.pos = v;
         label->text = str;
         label->color = color;
+        
+        // print the raw label object
+        printf("Label object: %p\n", label);
         addChild(label);
         return label;
     }

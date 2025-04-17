@@ -2,7 +2,9 @@
 
 #include <assert.h>
 
-#include <fstream>
+#ifndef METAMODULE
+#include <stdio.h>
+#endif
 
 #include "SqLog.h"
 #include "SqStream.h"
@@ -86,13 +88,8 @@ bool LexContext::pushOneLevel(const std::string& relativePath, int currentLine) 
     if (it != testFolders.end()) {
         sIncludeContent = it->second;
     } else {
-        std::ifstream t(fullPath.toString());
-        if (!t.good()) {
-            //  printf("can't open file\n");
-            // return "can't open source file: " + sPath;
-            //SQWARN("can't open include %s", fullPath.toString().c_str());
-            //SQWARN("root = %s", rootFilePath.toString().c_str());
-
+        FILE* file = fopen(fullPath.toString().c_str(), "rb");
+        if (!file) {
             SqStream s;
             s.add("Can't open ");
             s.add(rawFilename);
@@ -102,8 +99,23 @@ bool LexContext::pushOneLevel(const std::string& relativePath, int currentLine) 
             errorString_ = s.str();
             return false;
         }
-        std::string str((std::istreambuf_iterator<char>(t)),
-                        std::istreambuf_iterator<char>());
+
+        // Get file size
+        fseek(file, 0, SEEK_END);
+        long fileSize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        // Allocate buffer and read file
+        std::string str;
+        str.resize(fileSize);
+        size_t bytesRead = fread(&str[0], 1, fileSize, file);
+        fclose(file);
+
+        if (bytesRead != fileSize) {
+            errorString_ = "Error reading include file";
+            return false;
+        }
+
         sIncludeContent = std::move(str);
     }
     if (sIncludeContent.empty()) {

@@ -1,8 +1,12 @@
 
+#ifndef METAMODULE
 #include "FlacReader.h"
+#endif
 #include "SqLog.h"
 #include "WaveLoader.h"
+#ifndef METAMODULE
 #include "share/windows_unicode_filenames.h"
+#endif
 
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
@@ -104,6 +108,7 @@ void WaveFileLoader::convertToMono() {
 }
 
 //----------------------------------------------------------------
+#ifndef METAMODULE
 class FlacFileLoader : public LoaderBase {
 public:
     FlacFileLoader(const FilePath& fp) : LoaderBase(fp) {}
@@ -125,7 +130,7 @@ public:
 private:
     FlacReader reader;
 };
-
+#endif
 //-------------------------------------------
 class TestFileLoader : public LoaderBase {
 public:
@@ -205,7 +210,9 @@ WaveLoader::WaveInfoPtr WaveLoader::loaderFactory(const FilePath& file) {
     if (extension == "wav") {
         loader = std::make_shared<WaveFileLoader>(file);
     } else if (extension == "flac") {
+#ifndef METAMODULE
         loader = std::make_shared<FlacFileLoader>(file);
+#endif
     } else {
         loader = std::make_shared<NullFileLoader>(file);
     }

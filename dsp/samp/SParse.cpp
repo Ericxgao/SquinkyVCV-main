@@ -9,7 +9,9 @@
 #include "SLex.h"
 #include "SqLog.h"
 #include "SqStream.h"
+#ifndef METAMODULE
 #include "share/windows_unicode_filenames.h"
+#endif
 
 // global for mem leak detection
 int parseCount = 0;

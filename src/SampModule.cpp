@@ -345,10 +345,10 @@ inline void SampWidget::removeKeyswitchPopup() {
 
 void SampWidget::step() {
     ModuleWidget::step();
-    pollForDeserializedPatch();
-    pollForStateChange();
-    pollNewState();
-    pollForProgress();
+    // pollForDeserializedPatch();
+    // pollForStateChange();
+    // pollNewState();
+    // pollForProgress();
 }
 
 void SampWidget::pollForProgress() {
@@ -459,6 +459,7 @@ void SampWidget::loadSamplerFile() {
         osdialog_filters_free(filters);
     });
 
+#ifndef METAMODULE
     char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), filename.c_str(), filters);
 
     if (!pathC) {
@@ -475,6 +476,18 @@ void SampWidget::loadSamplerFile() {
         this->requestNewSampleSet(FilePath(pathC));
         nextUIState = State::Loading;
     }
+#else
+    async_osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL, [this](char *path) {
+        DEFER({
+            std::free(path);
+        });
+
+        if (path) {
+            this->requestNewSampleSet(FilePath(path));
+            nextUIState = State::Loading;
+        }
+    });
+#endif
 }
 
 void SampWidget::getRootFolder() {
@@ -487,6 +500,7 @@ void SampWidget::getRootFolder() {
         osdialog_filters_free(filters);
     });
 
+#ifndef METAMODULE
     char* pathC = osdialog_file(OSDIALOG_OPEN_DIR, dir.c_str(), filename.c_str(), filters);
 
     if (!pathC) {
@@ -496,6 +510,13 @@ void SampWidget::getRootFolder() {
     DEFER({
         std::free(pathC);
     });
+#else
+    async_osdialog_file(OSDIALOG_OPEN_DIR, dir.c_str(), NULL, NULL, [this](char *path) {
+        DEFER({
+            std::free(path);
+        });
+    });
+#endif
 }
 
 const float dx = 38;

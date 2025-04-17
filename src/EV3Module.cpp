@@ -432,7 +432,7 @@ void EV3Widget::makeSection(EV3Module *module, int index, std::shared_ptr<ICompo
     
     std::vector<std::string> waveNames = {"Sine", "Tri", "Saw", "Square", "Even", "Off"};
     CenteredLabel* const waveLabel = new CenteredLabel(20, waveNames);
-    waveLabel->box.pos = Vec(waveKnob->box.pos.x - 42, waveKnob->box.pos.y + 30);
+    waveLabel->box.pos = Vec(waveKnob->box.pos.x - 42, waveKnob->box.pos.y + 20);
     waveLabel->text = waveNames[0];
     waveLabel->knob = waveKnob;
     addChild(waveLabel);
