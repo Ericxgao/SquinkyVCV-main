@@ -76,8 +76,14 @@ void CompressorModule::addParams() {
                 this->configParam<WetdryQuantity2>(i, param.min, param.max, param.def, paramName);
                 break;
             case Comp::RATIO_PARAM:
+            {
                 this->configParam<RatiosQuantity2>(i, param.min, param.max, param.def, paramName);
+                #ifdef METAMODULE
+                    std::vector<std::string> ratioVec(std::begin(Comp::ratios()), std::end(Comp::ratios()));
+                    this->configSwitch(i, 0.0f, float(ratioVec.size() - 1), 0.f, "Ratio", ratioVec);
+                #endif
                 break;
+            }
             case Comp::NOTBYPASS_PARAM:
                 this->configParam<BypassQuantity2>(i, param.min, param.max, param.def, paramName);
                 break;

@@ -84,8 +84,13 @@ public:
     };
 
     enum LightIds {
+        LIGHT_OUTPUT,
         NUM_LIGHTS
     };
+
+    static std::vector<std::string> getRangeNames() {
+        return {"5 Hz", "50 Hz", "500 Hz", "5 kHz", "exp"};
+    }
 
     /**
      * Main processing entry point. Called every sample

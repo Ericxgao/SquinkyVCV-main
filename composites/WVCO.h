@@ -1,4 +1,3 @@
-
 #pragma once
 
 /**
@@ -204,6 +203,10 @@ public:
 
     static std::vector<std::string> getWaveformNames() {
         return {"Sine", "Wave folder", "Triangle<>Saw"};
+    }
+
+    static std::vector<std::string> getWaveformLabels() {
+        return {"sine", "fold", "T/S"};
     }
 
     float convertOldShapeGain(float old) const;

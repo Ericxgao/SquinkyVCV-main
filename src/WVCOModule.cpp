@@ -1,4 +1,3 @@
-
 #include <sstream>
 #include "Squinky.hpp"
 #include "WidgetComposite.h"
@@ -236,10 +235,15 @@ WVCOModule::WVCOModule()
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this); 
 
+    #ifdef METAMODULE
+    std::vector<std::string> waveformNames = Comp::getWaveformLabels();
+    configSwitch(Comp::WAVE_SHAPE_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    #endif
+
     onSampleRateChange();
     wvco->init();
 
-    subsituteDiscreteParamQuantity(Comp::getWaveformNames(), *this, Comp::WAVE_SHAPE_PARAM);
+    subsituteDiscreteParamQuantity(Comp::getWaveformLabels(), *this, Comp::WAVE_SHAPE_PARAM);
 }
 
 void WVCOModule::stampPatchAs2()
@@ -408,7 +412,7 @@ void WVCOWidget::addKnobs(WVCOModule *module, std::shared_ptr<IComposite> icomp)
     p->setLabels( {"sine", "fold", "T/S"});
     addParam(p);
     #else
-    std::vector<std::string> labelsWaveform = {"sine", "fold", "T/S"};  
+    std::vector<std::string> labelsWaveform = Comp::getWaveformLabels();  
     SnapTrimpot* const trimpot = SqHelper::createParam<SnapTrimpot>(
         icomp,
         Vec(knobX4, knobY1+2),

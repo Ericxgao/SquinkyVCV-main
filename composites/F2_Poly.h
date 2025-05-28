@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <assert.h>
@@ -207,6 +206,14 @@ public:
     static float_4 computeGain_slow(bool twoStages, float_4 q4, float_4 r4);
     static float_4 processR_slow(float_4 rawR);
     static float_4 processR_fast(float_4 rawR);
+
+    static std::vector<std::string> getModeNames() {
+        return {"LP", "BP", "HP", "N"};
+    }
+
+    static std::vector<std::string> getTopologyNames() {
+        return {"12dB", "24dB", "Par", "Par -"};
+    }
 
 private:
     StateVariableFilterParams2<T> params1[4];

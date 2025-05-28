@@ -62,6 +62,12 @@ FiltModule::FiltModule()
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this); 
     onSampleRateChange();
+
+    #ifdef METAMODULE
+    configSwitch(Comp::TYPE_PARAM, 0.0f, float(Comp::getTypeNames().size() - 1), 0.f, "Type", Comp::getTypeNames());
+    configSwitch(Comp::VOICING_PARAM, 0.0f, float(Comp::getVoicingNames().size() - 1), 0.f, "Voicing", Comp::getVoicingNames());
+    #endif
+    
     filt->init();
     poly=false;
 }

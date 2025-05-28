@@ -1,4 +1,3 @@
-
 #include "Squinky.hpp"
 #include "FrequencyShifter.h"
 #include "WidgetComposite.h"
@@ -45,7 +44,7 @@ public:
 };
 
 extern float values[];
-extern const char* ranges[];
+extern const char* ranges[5];
 
 #ifdef __V1x
 BootyModule::BootyModule()
@@ -62,6 +61,11 @@ BootyModule::BootyModule()
     shifter = std::make_shared<Comp>(this);
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this);
+
+    #ifdef METAMODULE
+    std::vector<std::string> rangeVec(std::begin(ranges), std::end(ranges));
+    configSwitch(Comp::FREQ_RANGE_PARAM, 0.0f, 4.0f, 0.f, "Frequency Range", rangeVec);
+    #endif
 #else
 BootyModule::BootyModule() :
     Module(Comp::NUM_PARAMS,

@@ -46,6 +46,13 @@ EV3Module::EV3Module()
     ev3 = std::make_shared<Comp>(this);
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this);
+
+    #ifdef METAMODULE
+    std::vector<std::string> waveformNames = Comp::getWaveformNames();
+    configSwitch(Comp::WAVE1_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    configSwitch(Comp::WAVE2_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    configSwitch(Comp::WAVE3_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    #endif
 }
 #else
 EV3Module::EV3Module()
@@ -430,7 +437,7 @@ void EV3Widget::makeSection(EV3Module *module, int index, std::shared_ptr<ICompo
         Comp::WAVE1_PARAM + delta * index);
     addParam(waveKnob);
     
-    std::vector<std::string> waveNames = {"Sine", "Tri", "Saw", "Square", "Even", "Off"};
+    std::vector<std::string> waveNames = Comp::getWaveformNames();
     CenteredLabel* const waveLabel = new CenteredLabel(20, waveNames);
     waveLabel->box.pos = Vec(waveKnob->box.pos.x - 42, waveKnob->box.pos.y + 20);
     waveLabel->text = waveNames[0];

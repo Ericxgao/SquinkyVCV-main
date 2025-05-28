@@ -116,6 +116,10 @@ public:
         NUM_LIGHTS
     };
 
+    static std::vector<std::string> getWaveformNames() {
+        return {"Sine", "Tri", "Saw", "Square", "Even", "Off"};
+    }
+
     void step() override;
 
     bool isLoweringVolume() const {

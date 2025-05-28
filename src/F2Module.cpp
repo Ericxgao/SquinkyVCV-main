@@ -1,4 +1,3 @@
-
 #include "Squinky.hpp"
 #include "WidgetComposite.h"
 
@@ -125,6 +124,11 @@ F2Module::F2Module() {
     blank = std::make_shared<Comp>(this);
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
     SqHelper::setupParams(icomp, this);
+
+    #ifdef METAMODULE
+    configSwitch(Comp::MODE_PARAM, 0.0f, float(Comp::getModeNames().size() - 1), 0.f, "Mode", Comp::getModeNames());
+    configSwitch(Comp::TOPOLOGY_PARAM, 0.0f, float(Comp::getTopologyNames().size() - 1), 0.f, "Topology", Comp::getTopologyNames());
+    #endif
 
     onSampleRateChange();
     blank->init();
@@ -302,7 +306,7 @@ void F2Widget::addKnobs(F2Module* module, std::shared_ptr<IComposite> icomp) {
         Comp::MODE_PARAM);
     addParam(modeKnob);
 
-    std::vector<std::string> modeNames = {"LP", "BP", "HP", "N"};
+    std::vector<std::string> modeNames = Comp::getModeNames();
     CenteredLabel* const modeLabel = new CenteredLabel(20, modeNames);
     modeLabel->box.pos = Vec(modeKnob->box.pos.x - 22, modeKnob->box.pos.y);
     modeLabel->text = modeNames[0];
@@ -317,7 +321,7 @@ void F2Widget::addKnobs(F2Module* module, std::shared_ptr<IComposite> icomp) {
         Comp::TOPOLOGY_PARAM);      
     addParam(topologyKnob);
 
-    std::vector<std::string> topologyNames = {"12dB", "24dB", "Par", "Par -"};  
+    std::vector<std::string> topologyNames = Comp::getTopologyNames();
     CenteredLabel* const topologyLabel = new CenteredLabel(20, topologyNames);
     topologyLabel->box.pos = Vec(topologyKnob->box.pos.x - 22, topologyKnob->box.pos.y);
     topologyLabel->text = topologyNames[0];

@@ -1,4 +1,3 @@
-
 #pragma once
 
 //#ifndef _MSC_VER
@@ -169,6 +168,14 @@ public:
 
     MixParamsAll mixParams;
     static void normalizeVolume(float&, float&, float&, float&, float&, float&);
+
+    static std::vector<std::string> getQuantizerLabels() {
+        return {"Off", "12ET", "7ET", "12JI", "7JI"};
+    }
+
+    static std::vector<std::string> getWaveformLabels() {
+        return {"Saw", "Sq", "Mix"};
+    }
 
 private:
     std::shared_ptr<SimpleQuantizer> quantizer;

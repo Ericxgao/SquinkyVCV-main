@@ -53,7 +53,15 @@ SubModule::SubModule()
 
     blank = std::make_shared<Comp>(this);
     std::shared_ptr<IComposite> icomp = Comp::getDescription();
-    SqHelper::setupParams(icomp, this); 
+    SqHelper::setupParams(icomp, this);
+
+    #ifdef METAMODULE
+    std::vector<std::string> waveformNames = Comp::getWaveformLabels();
+    configSwitch(Comp::WAVEFORM1_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    configSwitch(Comp::WAVEFORM2_PARAM, 0.0f, float(waveformNames.size() - 1), 0.f, "Waveform", waveformNames);
+    std::vector<std::string> quantizerLabels = Comp::getQuantizerLabels();
+    configSwitch(Comp::QUANTIZER_SCALE_PARAM, 0.0f, float(quantizerLabels.size() - 1), 0.f, "Quantizer", quantizerLabels);
+    #endif
 
     onSampleRateChange();
     blank->init();
@@ -275,7 +283,7 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->setLabels( {"Off", "12ET", "7ET", "12JI", "7JI"});
     addParam(p);
     #else
-    std::vector<std::string> labelsQuantizer = {"Off", "12ET", "7ET", "12JI", "7JI"};
+    std::vector<std::string> labelsQuantizer = Comp::getQuantizerLabels();
     SnapTrimpot* trimpotQuantizer = SqHelper::createParam<SnapTrimpot>(
         icomp,
         Vec(xMiddleSel, 206),
@@ -303,7 +311,7 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->setLabels( {"Saw", "Sq", "Mix"});
     addParam(p);
     #else
-    std::vector<std::string> labelsWaveform = {"Saw", "Sq", "Mix"};
+    std::vector<std::string> labelsWaveform = Comp::getWaveformLabels();
     SnapTrimpot* trimpotWaveform = SqHelper::createParam<SnapTrimpot>(
         icomp,
         Vec(xMiddleSel, knobY1 - 10),
@@ -331,7 +339,7 @@ void SubWidget::addMiddleControls(SubModule *module, std::shared_ptr<IComposite>
     p->setLabels( {"Saw", "Sq", "Mix"});
     addParam(p);
     #else
-    std::vector<std::string> labels = {"Saw", "Sq", "Mix"};
+    std::vector<std::string> labels = Comp::getWaveformLabels();
     SnapTrimpot* trimpot = SqHelper::createParam<SnapTrimpot>(
         icomp,
         Vec(xMiddleSel, knobY1 + 40),
