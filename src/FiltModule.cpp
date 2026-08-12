@@ -307,7 +307,7 @@ void FiltWidget::addParams(FiltModule *module, std::shared_ptr<IComposite> icomp
     addParam(typeKnob);
     CenteredLabel* const typeLabel = new CenteredLabel(20, Comp::getTypeNames());
 	typeLabel->box.pos = Vec(typeKnob->box.pos.x - 5, typeKnob->box.pos.y);
-	typeLabel->text = Comp::getTypeNames()[int(typeKnob->getParamQuantity()->getValue())];
+	typeLabel->text = Comp::getTypeNames()[module ? int(typeKnob->getParamQuantity()->getValue()) : 0];
     typeLabel->knob = typeKnob;
 	addChild(typeLabel);
     
@@ -319,7 +319,7 @@ void FiltWidget::addParams(FiltModule *module, std::shared_ptr<IComposite> icomp
     addParam(voicingKnob);
     CenteredLabel* const voicingLabel = new CenteredLabel(20, Comp::getVoicingNames());
 	voicingLabel->box.pos = Vec(voicingKnob->box.pos.x - 5, voicingKnob->box.pos.y);
-	voicingLabel->text = Comp::getVoicingNames()[int(voicingKnob->getParamQuantity()->getValue())];
+	voicingLabel->text = Comp::getVoicingNames()[module ? int(voicingKnob->getParamQuantity()->getValue()) : 0];
 	voicingLabel->knob = voicingKnob;
 	addChild(voicingLabel);
     #endif
